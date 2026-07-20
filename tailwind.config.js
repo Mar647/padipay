@@ -17,7 +17,7 @@ export default {
         },
         violet: "#8B6EFF",
         "text-primary": "#F7F7F4",
-        "text-muted": "#85888E",
+        "text-muted": "#9CA0A8",
       },
       fontFamily: {
         display: ["Sora", "sans-serif"],

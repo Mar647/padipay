@@ -1,9 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import ContributionWheel from "./ContributionWheel";
 import GlassCard from "./GlassCard";
 import DTIBadge from "./DTIBadge";
 import VaultCard from "./VaultCard";
 import RiskAlert from "./RiskAlert";
 import GroupListItem from "./GroupListItem";
+import Button from "./Button";
 
 const demoData = {
   userName: "Marvellous",
@@ -33,9 +35,15 @@ const demoData = {
     activeGroups: 2,
     streak: 8,
   },
+  fundingAccount: {
+    bankName: "Monnify Microfinance Bank",
+    accountNumber: "8123456789",
+    amountDue: 50000,
+  },
 };
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   return (
     <>
       <header className="flex justify-between items-center mb-5 md:mb-8">
@@ -82,6 +90,22 @@ export default function Dashboard() {
             <ContributionWheel {...demoData.wheel} />
           </div>
 
+          <GlassCard glow="emerald" className="mb-4">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs text-text-muted">Fund this cycle</p>
+              <p className="font-display font-bold text-lg tabular-nums text-emerald">
+                &#8358;{demoData.fundingAccount.amountDue.toLocaleString("en-NG")}
+              </p>
+            </div>
+            <div className="flex items-center justify-between text-xs text-text-muted mb-4 glass rounded-lg px-3 py-2.5">
+              <span>{demoData.fundingAccount.bankName}</span>
+              <span className="font-display font-semibold tabular-nums text-text-primary">
+                {demoData.fundingAccount.accountNumber}
+              </span>
+            </div>
+            <Button onClick={() => navigate("/fund")}>Make Payment</Button>
+          </GlassCard>
+
           <GlassCard className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-gold to-gold-dim shrink-0">
@@ -96,7 +120,7 @@ export default function Dashboard() {
                 </p>
               </div>
             </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#85888E" strokeWidth="2" className="shrink-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA0A8" strokeWidth="2" className="shrink-0">
               <path d="M9 18l6-6-6-6" />
             </svg>
           </GlassCard>

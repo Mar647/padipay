@@ -41,6 +41,14 @@ export default function Onboarding() {
           </>
         ) : (
           <>
+            <div className="flex items-center gap-2 mb-4 glass rounded-xl px-4 py-3">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10E094" strokeWidth="2" className="shrink-0">
+                <rect x="3" y="11" width="18" height="10" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <p className="text-xs text-text-muted">Your BVN is encrypted end-to-end and never stored on our servers</p>
+            </div>
+
             <TextField
               id="bvn"
               label="Bank Verification Number (BVN)"
@@ -62,6 +70,14 @@ export default function Onboarding() {
             >
               Back
             </button>
+
+            <div className="flex items-center justify-center gap-2 mt-8 opacity-70">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA0A8" strokeWidth="2">
+                <rect x="3" y="11" width="18" height="10" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <p className="text-[11px] text-text-muted tracking-wide">Secured via Monnify &amp; NIBSS</p>
+            </div>
           </>
         )}
       </div>
