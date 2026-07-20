@@ -1,0 +1,26 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap');
+@config "../../tailwind.config.js";
+
+@layer base {
+  body {
+    @apply bg-obsidian text-text-primary font-sans antialiased;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(139, 110, 255, 0.08), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(16, 224, 148, 0.06), transparent 40%);
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .glass {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
