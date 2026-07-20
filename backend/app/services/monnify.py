@@ -30,11 +30,11 @@ async def create_reserved_account(group_id: str, group_name: str, email: str) ->
             headers={"Authorization": f"Bearer {token}"},
             json={
                 "accountReference": f"padipay-group-{group_id}",
-                "accountName": f"PadiPay - {group_name}",
+                "accountName": f"PadiPay Savings - {group_name}",
                 "currencyCode": "NGN",
                 "contractCode": CONTRACT_CODE,
                 "customerEmail": email,
-                "customerName": group_name,
+                "customerName": f"PadiPay - {group_name}",
                 "getAllAvailableBanks": False,
                 "preferredBanks": ["035"],
             },
