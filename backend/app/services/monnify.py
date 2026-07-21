@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 import httpx
 import base64
 import os
@@ -30,14 +31,19 @@ async def create_reserved_account(group_id: str, group_name: str, email: str) ->
             headers={"Authorization": f"Bearer {token}"},
             json={
                 "accountReference": f"padipay-group-{group_id}",
-                "accountName": f"PadiPay - {group_name}",
+                "accountName": f"PadiPay Savings - {group_name}",
                 "currencyCode": "NGN",
                 "contractCode": CONTRACT_CODE,
-                "customerEmail": email,
-                "customerName": group_name,
+                "customerEmail": f"group-{group_id}@padipay.ng",
+                "customerName": f"PadiPay - {group_name}",
                 "getAllAvailableBanks": False,
                 "preferredBanks": ["035"],
             },
         )
-        res.raise_for_status()
+        if res.status_code != 200:
+            print(f"Monnify error body: {res.text}")
+            raise HTTPException(
+                status_code=502,
+                detail=f"Monnify error: {res.text}"
+            )
         return res.json()["responseBody"]

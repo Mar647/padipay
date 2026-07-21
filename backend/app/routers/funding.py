@@ -1,23 +1,38 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.orm import Session
+from app.database import get_db, VirtualAccountModel
 from app.services.monnify import create_reserved_account
 
 router = APIRouter()
 
-# In-memory store
-virtual_accounts_db = {}
-
 @router.post("/create-account/{group_id}")
-async def create_virtual_account(group_id: str, group_name: str, email: str):
+async def create_virtual_account(group_id: str, group_name: str, email: str, db: Session = Depends(get_db)):
+    # Check if account already exists
+    existing = db.query(VirtualAccountModel).filter(VirtualAccountModel.group_id == group_id).first()
+    if existing:
+        return existing
+
     try:
         account = await create_reserved_account(group_id, group_name, email)
-        virtual_accounts_db[group_id] = account
-        return account
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"Monnify error: {str(e)}")
 
+    virtual_account = VirtualAccountModel(
+        group_id=group_id,
+        account_number=account["accounts"][0]["accountNumber"],
+        account_name=account["accountName"],
+        bank_name=account["accounts"][0]["bankName"],
+        bank_code=account["accounts"][0]["bankCode"],
+        reservation_reference=account["reservationReference"],
+    )
+    db.add(virtual_account)
+    db.commit()
+    db.refresh(virtual_account)
+    return virtual_account
+
 @router.get("/virtual-account/{group_id}")
-async def get_virtual_account(group_id: str):
-    account = virtual_accounts_db.get(group_id)
+async def get_virtual_account(group_id: str, db: Session = Depends(get_db)):
+    account = db.query(VirtualAccountModel).filter(VirtualAccountModel.group_id == group_id).first()
     if not account:
         raise HTTPException(status_code=404, detail="No virtual account found for this group")
     return account
