@@ -34,7 +34,7 @@ async def create_reserved_account(group_id: str, group_name: str, email: str) ->
                 "accountName": f"PadiPay Savings - {group_name}",
                 "currencyCode": "NGN",
                 "contractCode": CONTRACT_CODE,
-                "customerEmail": email,
+                "customerEmail": f"group-{group_id}@padipay.ng",
                 "customerName": f"PadiPay - {group_name}",
                 "getAllAvailableBanks": False,
                 "preferredBanks": ["035"],
