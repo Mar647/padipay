@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 import httpx
 import base64
 import os
@@ -39,5 +40,10 @@ async def create_reserved_account(group_id: str, group_name: str, email: str) ->
                 "preferredBanks": ["035"],
             },
         )
-        res.raise_for_status()
+        if res.status_code != 200:
+            print(f"Monnify error body: {res.text}")
+            raise HTTPException(
+                status_code=502,
+                detail=f"Monnify error: {res.text}"
+            )
         return res.json()["responseBody"]
