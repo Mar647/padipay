@@ -4,18 +4,50 @@ import Button from "../Button";
 import TextField from "../TextField";
 import GlassCard from "../GlassCard";
 
+const API_BASE = "https://padipay-w28r.onrender.com";
+
 export default function GroupCreation() {
   const [name, setName] = useState("");
   const [members, setMembers] = useState(5);
   const [amount, setAmount] = useState("");
   const [frequency, setFrequency] = useState<"weekly" | "monthly">("monthly");
+  const [startDate, setStartDate] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`${API_BASE}/groups/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          contribution_amount: Number(amount),
+          frequency,
+          max_members: members,
+          start_date: startDate,
+        }),
+      });
+
+      if (!res.ok) throw new Error(`Server responded ${res.status}`);
+
+      const data = await res.json();
+      navigate("/invite", { state: { groupId: data.group_id, inviteCode: data.invite_code } });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+      setSubmitting(false);
+    }
+  };
 
   return (
     <>
       <header className="mb-7 md:mb-10">
         <button onClick={() => navigate(-1)} className="mb-4 text-text-muted" aria-label="Back">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#85888E" strokeWidth="2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9CA0A8" strokeWidth="2">
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
@@ -63,6 +95,14 @@ export default function GroupCreation() {
             onChange={(e) => setAmount(e.target.value)}
           />
 
+          <TextField
+            id="start-date"
+            label="Cycle start date"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+
           <div className="mb-6">
             <label className="block text-[13px] text-text-muted mb-2">Cycle frequency</label>
             <div className="grid grid-cols-2 gap-3">
@@ -97,9 +137,13 @@ export default function GroupCreation() {
         </div>
       </div>
 
+      {error && (
+        <p className="text-xs text-violet mb-3">Couldn't create group: {error}</p>
+      )}
+
       <div className="mt-4 md:max-w-sm">
-        <Button onClick={() => navigate("/invite")} disabled={!name || !amount}>
-          Create group and invite members
+        <Button onClick={handleSubmit} disabled={!name || !amount || !startDate || submitting}>
+          {submitting ? "Creating group\u2026" : "Create group and invite members"}
         </Button>
       </div>
     </>
