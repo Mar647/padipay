@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy.orm import Session
 from app.schemas import Group, GroupCreateRequest, JoinGroupRequest
 from app.database import get_db, GroupModel
@@ -59,8 +60,10 @@ async def join_group(body: JoinGroupRequest, db: Session = Depends(get_db)):
     }
     
     updated_members = list(group.members or []) + [new_member]
+    from sqlalchemy.orm.attributes import flag_modified
     group.members = updated_members
-    group.current_members = len(updated_members)
+    group.current_members = len(updated_members) + 1  # +1 for the admin
+    flag_modified(group, "members")
     db.commit()
     db.refresh(group)
     return Group(**group.__dict__)
