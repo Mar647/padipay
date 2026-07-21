@@ -49,4 +49,18 @@ async def join_group(body: JoinGroupRequest, db: Session = Depends(get_db)):
     group = db.query(GroupModel).filter(GroupModel.invite_code == body.invite_code).first()
     if not group:
         raise HTTPException(status_code=404, detail="Invalid invite code")
+    
+    new_member = {
+        "user_id": str(uuid.uuid4())[:8],
+        "name": body.member_name,
+        "dti_score": 70,
+        "payout_position": group.current_members + 1,
+        "has_paid_this_cycle": False,
+    }
+    
+    updated_members = list(group.members or []) + [new_member]
+    group.members = updated_members
+    group.current_members = len(updated_members)
+    db.commit()
+    db.refresh(group)
     return Group(**group.__dict__)

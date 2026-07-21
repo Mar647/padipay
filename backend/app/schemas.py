@@ -41,6 +41,7 @@ class Group(BaseModel):
 
 class JoinGroupRequest(BaseModel):
     invite_code: str
+    member_name: str = "Anonymous"
 
 class Notification(BaseModel):
     id: str
